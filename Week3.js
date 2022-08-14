@@ -1,11 +1,11 @@
-const express = require("express");
-const app = express(); // app = 어플리케이션
+const express = require("express"); // 모듈 요청하기
+const app = express();
 const path = require("path");
 const bodyParser = require("body-parser");
 const mqtt = require("mqtt");
 const http = require("http");
 const mongoose = require("mongoose");
-const Sensors = require("./IOT_web/IOT_web/models/sensors");
+const Sensors = require("./IOT_web/IOT_web/models/sensors"); // 파일 불러오기
 const devicesRouter = require("./IOT_web/IOT_web/routes/devices");
 require("dotenv/config");
 
@@ -23,7 +23,7 @@ client.on("connect", () => {
 
 client.on("message", async (topic, message) => {
   var obj = JSON.parse(message);
-  var date = new Date();
+  var date = new Date(); // 시간 가져오기
   var year = date.getFullYear();
   var month = date.getMonth();
   var today = date.getDate();
@@ -35,7 +35,7 @@ client.on("message", async (topic, message) => {
   );
   // console.log(obj);
 
-  const sensors = new Sensors({
+  const sensors = new Sensors({ // 센서값 가져오기
     tmp: obj.tmp,
     hum: obj.humi,
     pm1: obj.pm1,
@@ -45,10 +45,10 @@ client.on("message", async (topic, message) => {
   });
 
   try {
-    const saveSensors = await sensors.save();
+    const saveSensors = await sensors.save(); // 센서값 저장하기
     console.log("insert OK");
   } catch (err) {
-    console.log({ message: err });
+    console.log({ message: err }); // 에러 발생 시 에러 로그로 알려주기
   }
 });
 app.set("port", "3000");
@@ -74,13 +74,13 @@ io.on("connection", (socket) => {
 
 //웹서버 구동 및 DATABASE 구동
 server.listen(3000, (err) => {
-  if (err) {
+  if (err) { // 에러 발생 시 로그로 알려주기
     return console.log(err);
-  } else {
+  } else { // 잘 작동했을 시 로그로 알려주기
     console.log("server ready");
     //Connection To DB
     mongoose.connect(
-      process.env.MONGODB_URL,
+      process.env.MONGODB_URL, // MongoDB 연결
       { useNewUrlParser: true, useUnifiedTopology: true },
       () => console.log("connected to DB!")
     );
